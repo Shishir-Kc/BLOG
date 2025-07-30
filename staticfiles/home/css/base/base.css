@@ -1,0 +1,31 @@
+.header{
+    border: 1px solid green;
+    display: flex;
+    height: 70px;
+    border-radius: 50px;
+    justify-content: space-evenly;
+
+}
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  color: white;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+
