@@ -1,43 +1,265 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'home/css/base/base.css' %}" type="text/css" />   
-    {% block links %}
-
-    {% endblock links %}
-
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fu** Social Media ! </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom styles for smooth transitions */
+    .mobile-menu-transition {
+      transition: all 0.3s ease-in-out;
+    }
     
+    /* Ensure profile images are properly sized */
+    .profile-img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+    }
+    
+    /* Loading state for profile images */
+    .profile-img-loading {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+    
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    /* Mobile menu slide animation */
+    .mobile-menu-enter {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    
+    .mobile-menu-enter-active {
+      transform: translateY(0);
+      opacity: 1;
+      transition: all 0.2s ease-out;
+    }
+  </style>
 </head>
+<body class="bg-gray-50 min-h-screen">
 
-<body>
+<!-- Navbar -->
+<nav class="bg-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href="/" class="flex items-center">
+          <span class="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors duration-200">
+            MyBlog
+          </span>
+        </a>
+      </div>
 
-    <div class="header">
-            <nav class="navbar">
-                <ul class="nav-links">
-                    <li> <a href="">Home</a></li>
-                    <li> <a href="">Latest</a></li>
-                    <li> <a href="">Trending</a></li>
-                </ul>
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">
+          Home
+        </a>
+        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 px-3 py-2 rounded-md hover:bg-gray-50">
+          Profile
+        </a>
+        
+        <!-- Desktop Profile Picture -->
+        <div class="relative">
+          <a href="/profile" id="desktop-profile-link" class="block">
+            <img id="desktop-user-pic" 
+                 src="/placeholder.svg?height=40&width=40" 
+                 alt="Profile" 
+                 class="profile-img profile-img-loading rounded-full border-2 border-gray-200 hover:border-blue-400 transition-all duration-200 cursor-pointer" />
+          </a>
+        </div>
+      </div>
 
-            </nav>
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" 
+                class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-200"
+                aria-expanded="false"
+                aria-label="Toggle navigation menu">
+          <svg id="menu-icon" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg id="close-icon" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <p>
-            
+  <!-- Mobile Navigation Menu -->
+  <div id="mobile-menu" class="hidden md:hidden mobile-menu-transition">
+    <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+      <a href="#" class="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium transition-colors duration-200">
+        Home
+      </a>
+      <a href="#" class="block px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md font-medium transition-colors duration-200">
+        Profile
+      </a>
+      
+      <!-- Mobile Profile Section -->
+      <div class="pt-4 pb-2 border-t border-gray-200">
+        <div class="flex items-center px-3">
+          <a href="/profile" id="mobile-profile-link" class="flex items-center space-x-3">
+            <img id="mobile-user-pic" 
+                 src="/placeholder.svg?height=40&width=40" 
+                 alt="Profile" 
+                 class="profile-img profile-img-loading rounded-full border-2 border-gray-200" />
+            <span class="text-gray-700 font-medium">View Profile</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content Area -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white rounded-lg shadow-sm p-6">
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">AAayyy Whats Uppp</h1>
+    <p class="text-gray-600 leading-relaxed">
+      Just uploading my works and research ! : ) 
     </p>
+  </div>
+</main>
 
+<script>
+  // Mobile menu functionality
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
 
+  // Toggle mobile menu
+  function toggleMobileMenu() {
+    const isHidden = mobileMenu.classList.contains('hidden');
+    
+    if (isHidden) {
+      // Show menu
+      mobileMenu.classList.remove('hidden');
+      mobileMenu.classList.add('mobile-menu-enter');
+      setTimeout(() => {
+        mobileMenu.classList.add('mobile-menu-enter-active');
+        mobileMenu.classList.remove('mobile-menu-enter');
+      }, 10);
+      
+      // Switch icons
+      menuIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+      mobileMenuButton.setAttribute('aria-expanded', 'true');
+    } else {
+      // Hide menu
+      mobileMenu.classList.add('hidden');
+      mobileMenu.classList.remove('mobile-menu-enter-active');
+      
+      // Switch icons
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      mobileMenuButton.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // Event listener for mobile menu button
+  mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (event) => {
+    const isClickInsideNav = event.target.closest('nav');
+    const isMenuOpen = !mobileMenu.classList.contains('hidden');
+    
+    if (!isClickInsideNav && isMenuOpen) {
+      toggleMobileMenu();
+    }
+  });
+
+  // Close mobile menu on window resize to desktop size
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768 && !mobileMenu.classList.contains('hidden')) {
+      toggleMobileMenu();
+    }
+  });
+
+  // API call to fetch user data
+  async function fetchUserData() {
+    try {
+      // Show loading state
+      const desktopImg = document.getElementById('desktop-user-pic');
+      const mobileImg = document.getElementById('mobile-user-pic');
+      
+      // Fetch user data from API
+      const response = await fetch('/api/user/');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const userData = await response.json();
+      
+      // Update profile images
+      if (userData.profile_pic) {
+        desktopImg.src = userData.profile_pic;
+        mobileImg.src = userData.profile_pic;
+        
+        // Remove loading animation
+        desktopImg.classList.remove('profile-img-loading');
+        mobileImg.classList.remove('profile-img-loading');
+        
+        // Add alt text with user info
+        const altText = userData.username ? `${userData.username}'s profile` : 'User profile';
+        desktopImg.alt = altText;
+        mobileImg.alt = altText;
+      }
+      
+      console.log('User data loaded successfully:', userData);
+      
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      
+      // Handle error - show default avatar or error state
+      const desktopImg = document.getElementById('desktop-user-pic');
+      const mobileImg = document.getElementById('mobile-user-pic');
+      
+      // Remove loading animation and show default avatar
+      desktopImg.classList.remove('profile-img-loading');
+      mobileImg.classList.remove('profile-img-loading');
+      desktopImg.src = '/placeholder.svg?height=40&width=40';
+      mobileImg.src = '/placeholder.svg?height=40&width=40';
+    }
+  }
+
+  // Load user data when page loads
+  document.addEventListener('DOMContentLoaded', fetchUserData);
+
+  // Smooth scroll for anchor links (if any)
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script>
 
 
 {% block content %}
-    
+
 {% endblock content %}
+
 
 
 
