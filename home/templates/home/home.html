@@ -1,21 +1,1124 @@
-{% extends "base/base.html" %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyBlog - Dark Theme</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-{% block links %}
-<script src="{% static 'home/js/home/home.js' %}"></script> 
-  
-{% endblock links %}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #18191a;
+      margin: 0;
+      padding: 0;
+      line-height: 1.34;
+      color: #e4e6ea;
+    }
 
-{% block content %}
+    /* Top Navigation Bar */
+    .top-navbar {
+      background: #242526;
+      border-bottom: 1px solid #3a3b3c;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
 
-<h1 id="latest-heading">Loading...</h1>
-<ul id="latest-list">
-  
-</ul>
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2374e1;
+      text-decoration: none;
+    }
 
+    .navbar-search {
+      flex: 1;
+      max-width: 320px;
+      margin: 0 16px;
+    }
 
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: #3a3b3c;
+      border-radius: 20px;
+      font-size: 15px;
+      outline: none;
+      color: #e4e6ea;
+    }
 
+    .search-input::placeholder {
+      color: #b0b3b8;
+    }
 
+    .search-input:focus {
+      background: #4e4f50;
+      box-shadow: 0 0 0 2px #2374e1;
+    }
 
+    .navbar-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-{% endblock content %}
+    .navbar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .navbar-avatar:hover {
+      opacity: 0.8;
+    }
+
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: #e4e6ea;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background-color: #3a3b3c;
+    }
+
+    /* Main Layout Container */
+    .main-container {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 56px;
+      max-width: 1920px;
+      margin: 0 auto;
+    }
+
+    /* Left Sidebar */
+    .left-sidebar {
+      width: 280px;
+      background: #242526;
+      border-right: 1px solid #3a3b3c;
+      position: fixed;
+      left: 0;
+      top: 56px;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 16px 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+    }
+
+    .sidebar-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #b0b3b8;
+      padding: 0 16px 8px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      color: #e4e6ea;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .sidebar-item:hover {
+      background-color: #3a3b3c;
+    }
+
+    .sidebar-item.active {
+      background-color: #263951;
+      color: #2374e1;
+      font-weight: 600;
+    }
+
+    .sidebar-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      fill: currentColor;
+    }
+
+    .sidebar-separator {
+      height: 1px;
+      background: #3a3b3c;
+      margin: 16px 0;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      margin-right: 280px;
+      padding: 16px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Right Sidebar */
+    .right-sidebar {
+      width: 280px;
+      background: #242526;
+      border-left: 1px solid #3a3b3c;
+      position: fixed;
+      right: 0;
+      top: 56px;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .widget {
+      background: #242526;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .widget-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #b0b3b8;
+      margin-bottom: 12px;
+    }
+
+    .online-friends {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .friend-item {
+      display: flex;
+      align-items: center;
+      padding: 4px 0;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+
+    .friend-item:hover {
+      background-color: #3a3b3c;
+    }
+
+    .friend-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 8px;
+      position: relative;
+    }
+
+    .online-indicator {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      background: #42b883;
+      border: 2px solid #242526;
+      border-radius: 50%;
+    }
+
+    .friend-name {
+      font-size: 14px;
+      color: #e4e6ea;
+    }
+
+    /* Posts Feed */
+    .posts-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Post Card Styles */
+    .post-card {
+      background: #242526;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.4s ease forwards;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .avatar:hover {
+      opacity: 0.8;
+    }
+
+    .post-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 15px;
+      color: #e4e6ea;
+      text-decoration: none;
+      cursor: pointer;
+      line-height: 1.33;
+    }
+
+    .username:hover {
+      text-decoration: underline;
+    }
+
+    .post-date {
+      font-size: 13px;
+      color: #b0b3b8;
+      margin-top: 1px;
+      cursor: pointer;
+    }
+
+    .post-date:hover {
+      text-decoration: underline;
+    }
+
+    .post-options {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b0b3b8;
+      transition: background-color 0.2s ease;
+    }
+
+    .post-options:hover {
+      background-color: #3a3b3c;
+    }
+
+    .post-content-wrapper {
+      padding: 0;
+    }
+
+    .post-text-content {
+      padding: 0 16px 16px;
+    }
+
+    .post-title {
+      font-size: 16px;
+      font-weight: 400;
+      color: #e4e6ea;
+      margin: 0 0 8px 0;
+      line-height: 1.33;
+      word-wrap: break-word;
+    }
+
+    .post-content {
+      font-size: 15px;
+      line-height: 1.33;
+      color: #e4e6ea;
+      margin: 0;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .post-image-container {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      background: #18191a;
+    }
+
+    .post-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+
+    .post-image:hover {
+      transform: scale(1.02);
+    }
+
+    .image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.2s ease;
+    }
+
+    .post-image-container:hover .image-overlay {
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 1;
+    }
+
+    .zoom-icon {
+      color: white;
+      font-size: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 8px;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      margin: auto;
+      background: transparent;
+      border-radius: 8px;
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-image {
+      width: 100%;
+      height: auto;
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.8);
+      border: none;
+      color: white;
+      font-size: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      z-index: 2001;
+    }
+
+    .modal-close:hover {
+      background: rgba(0, 0, 0, 1);
+      transform: scale(1.1);
+    }
+
+    .modal-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+      color: white;
+      padding: 32px 16px 16px;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      line-height: 1.33;
+    }
+
+    .modal-author {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    /* Loading States */
+    .loading-skeleton {
+      background: linear-gradient(90deg, #3a3b3c 25%, #4e4f50 50%, #3a3b3c 75%);
+      background-size: 200% 100%;
+      animation: loading 1.2s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-card {
+      background: #242526;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    /* Error and Empty States */
+    .error-container, .empty-container {
+      text-align: center;
+      padding: 40px;
+      background: #242526;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .error-title {
+      color: #f02849;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .error-message, .empty-message {
+      color: #b0b3b8;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .retry-button {
+      background: #2374e1;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .retry-button:hover {
+      background: #1a5db8;
+    }
+
+    .empty-title {
+      color: #e4e6ea;
+      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* Trending items */
+    .trending-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #3a3b3c;
+      color: #b0b3b8;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .trending-item:hover {
+      color: #e4e6ea;
+    }
+
+    .trending-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .right-sidebar {
+        display: none;
+      }
+      
+      .main-content {
+        margin-right: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .left-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+      }
+      
+      .left-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .mobile-overlay.show {
+        display: block;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 8px;
+      }
+      
+      .top-navbar {
+        padding: 0 8px;
+      }
+      
+      .navbar-search {
+        display: none;
+      }
+
+      .navbar-brand {
+        font-size: 20px;
+      }
+
+      .post-card {
+        margin: 0 -8px;
+        border-radius: 0;
+      }
+
+      .modal-content {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+
+      .modal-close {
+        top: 10px;
+        right: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .top-navbar {
+        height: 50px;
+        padding: 0 4px;
+      }
+
+      .main-container {
+        padding-top: 50px;
+      }
+
+      .left-sidebar {
+        top: 50px;
+      }
+
+      .navbar-brand {
+        font-size: 18px;
+      }
+
+      .main-content {
+        padding: 4px;
+      }
+
+      .post-header {
+        padding: 8px 12px;
+      }
+
+      .post-text-content {
+        padding: 0 12px 12px;
+      }
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+      }
+
+      .username {
+        font-size: 14px;
+      }
+
+      .post-date {
+        font-size: 12px;
+      }
+    }
+
+    /* Animation delays */
+    .post-card:nth-child(1) { animation-delay: 0.05s; }
+    .post-card:nth-child(2) { animation-delay: 0.1s; }
+    .post-card:nth-child(3) { animation-delay: 0.15s; }
+    .post-card:nth-child(4) { animation-delay: 0.2s; }
+    .post-card:nth-child(5) { animation-delay: 0.25s; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="top-navbar">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <a href="/" class="navbar-brand">MyBlog</a>
+    
+    <div class="navbar-search">
+      <input type="text" class="search-input" placeholder="Search MyBlog">
+    </div>
+    
+    <div class="navbar-profile">
+      <img src="/placeholder.svg?height=32&width=32" alt="Profile" class="navbar-avatar" id="navbar-avatar">
+    </div>
+  </nav>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay" onclick="closeSidebar()"></div>
+
+  <div class="main-container">
+    
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar" id="left-sidebar">
+      <div class="sidebar-section">
+        <a href="#" class="sidebar-item active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          Home
+        </a>
+        
+        <a href="#" class="sidebar-item">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          Profile
+        </a>
+        
+        <a href="#" class="sidebar-item">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.82,11.69,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+          </svg>
+          Settings
+        </a>
+      </div>
+      
+      <div class="sidebar-separator"></div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">Shortcuts</div>
+        
+        <a href="#" class="sidebar-item">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+          My Posts
+        </a>
+        
+        <a href="#" class="sidebar-item">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          Favorites
+        </a>
+      </div>
+      
+      <div class="sidebar-separator"></div>
+      
+      <div class="sidebar-section">
+        <a href="#" class="sidebar-item" onclick="logout()">
+          <svg class="sidebar-icon" viewBox="0 0 24 24">
+            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+          </svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div id="posts-feed" class="posts-feed"></div>
+      
+      <!-- Loading Skeletons -->
+      <div id="loading-container" style="display: none;"></div>
+
+      <!-- Error State -->
+      <div id="error-container" style="display: none;">
+        <div class="error-container">
+          <div class="error-title">Something went wrong</div>
+          <p class="error-message">We're having trouble loading posts right now.</p>
+          <button onclick="fetchPosts()" class="retry-button">Try Again</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar">
+      
+      <div class="widget">
+        <div class="widget-title">Trending</div>
+        <div>
+          <div class="trending-item">#Technology</div>
+          <div class="trending-item">#WebDevelopment</div>
+          <div class="trending-item">#Design</div>
+          <div class="trending-item">#Programming</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-content">
+      <img id="modalImage" class="modal-image" src="/placeholder.svg" alt="">
+      <div class="modal-info">
+        <div id="modalTitle" class="modal-title"></div>
+        <div id="modalAuthor" class="modal-author"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let posts = [];
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+    const leftSidebar = document.getElementById('left-sidebar');
+    const mobileOverlay = document.querySelector('.mobile-overlay');
+
+    // Mobile sidebar functions
+    function toggleSidebar() {
+      leftSidebar.classList.toggle('open');
+      mobileOverlay.classList.toggle('show');
+    }
+
+    function closeSidebar() {
+      leftSidebar.classList.remove('open');
+      mobileOverlay.classList.remove('show');
+    }
+
+    // Create skeleton loading cards
+    function createSkeletonCard() {
+      return `
+        <div class="skeleton-card">
+          <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <div class="loading-skeleton" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 12px;"></div>
+            <div style="flex: 1;">
+              <div class="loading-skeleton" style="width: 50%; height: 12px; margin-bottom: 4px;"></div>
+              <div class="loading-skeleton" style="width: 30%; height: 12px;"></div>
+            </div>
+          </div>
+          <div class="loading-skeleton" style="width: 70%; height: 16px; margin-bottom: 8px;"></div>
+          <div class="loading-skeleton" style="width: 100%; height: 12px; margin-bottom: 4px;"></div>
+          <div class="loading-skeleton" style="width: 85%; height: 12px; margin-bottom: 12px;"></div>
+          <div class="loading-skeleton" style="width: 100%; height: 200px;"></div>
+        </div>
+      `;
+    }
+
+    // Show loading skeletons
+    function showLoading() {
+      const loadingContainer = document.getElementById('loading-container');
+      const postsFeed = document.getElementById('posts-feed');
+      
+      postsFeed.style.display = 'none';
+      loadingContainer.style.display = 'block';
+      loadingContainer.innerHTML = '';
+      
+      for (let i = 0; i < 5; i++) {
+        loadingContainer.innerHTML += createSkeletonCard();
+      }
+    }
+
+    // Hide loading
+    function hideLoading() {
+      const loadingContainer = document.getElementById('loading-container');
+      const postsFeed = document.getElementById('posts-feed');
+      
+      loadingContainer.style.display = 'none';
+      postsFeed.style.display = 'flex';
+    }
+
+    // Format date like Facebook
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffMinutes = Math.floor(diffTime / (1000 * 60));
+      const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffMinutes < 1) {
+        return 'Just now';
+      } else if (diffMinutes < 60) {
+        return `${diffMinutes}m`;
+      } else if (diffHours < 24) {
+        return `${diffHours}h`;
+      } else if (diffDays < 7) {
+        return `${diffDays}d`;
+      } else {
+        return date.toLocaleDateString('en-US', { 
+          month: 'short', 
+          day: 'numeric',
+          year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+        });
+      }
+    }
+
+    // Create post card HTML
+    function createPostCard(post, index) {
+      const formattedDate = formatDate(post.created);
+      const defaultAvatar = `data:image/svg+xml;base64,${btoa(`
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="20" fill="#3a3b3c"/>
+          <circle cx="20" cy="16" r="6" fill="#b0b3b8"/>
+          <path d="M8 32c0-6.627 5.373-12 12-12s12 5.373 12 12" fill="#b0b3b8"/>
+        </svg>
+      `)}`;
+
+      return `
+        <article class="post-card" style="animation-delay: ${index * 0.05}s;">
+          <div class="post-header">
+            <img src="${post.user.profile_pic || defaultAvatar}" 
+                 alt="${post.user.username}" 
+                 class="avatar" 
+                 onerror="this.src='${defaultAvatar}'" />
+            <div class="post-info">
+              <div class="username">${post.user.username}</div>
+              <div class="post-date">${formattedDate}</div>
+            </div>
+            <button class="post-options" title="More options">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <circle cx="10" cy="3" r="2"/>
+                <circle cx="10" cy="10" r="2"/>
+                <circle cx="10" cy="17" r="2"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="post-content-wrapper">
+            <div class="post-text-content">
+              <div class="post-title">${post.post_title}</div>
+              <div class="post-content">${post.content}</div>
+            </div>
+            
+            ${post.content_image ? `
+              <div class="post-image-container" onclick="openModal('${post.content_image}', '${post.post_title}', '${post.user.username}')">
+                <img src="${post.content_image}" 
+                     alt="${post.post_title}" 
+                     class="post-image" 
+                     loading="lazy" />
+                <div class="image-overlay">
+                  <div class="zoom-icon">⚬</div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </article>
+      `;
+    }
+
+    // Open image modal
+    function openModal(imageSrc, title, author) {
+      modalImage.src = imageSrc;
+      modalTitle.textContent = title;
+      modalAuthor.textContent = `Posted by ${author}`;
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close modal
+    function closeModal() {
+      modal.classList.remove('show');
+      document.body.style.overflow = 'auto';
+      setTimeout(() => {
+        modalImage.src = '';
+      }, 300);
+    }
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+        closeModal();
+      }
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth <= 768) {
+        if (!leftSidebar.contains(e.target) && !e.target.classList.contains('mobile-menu-btn')) {
+          closeSidebar();
+        }
+      }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 768) {
+        closeSidebar();
+      }
+    });
+
+    // Logout function
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        // Add your logout logic here
+        window.location.href = '/logout/';
+      }
+    }
+
+    // Fetch posts from API
+    async function fetchPosts() {
+      const postsFeed = document.getElementById('posts-feed');
+      const errorContainer = document.getElementById('error-container');
+
+      try {
+        showLoading();
+        errorContainer.style.display = 'none';
+
+        const response = await fetch('/api/content/');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        posts = await response.json();
+        hideLoading();
+
+        if (!posts || posts.length === 0) {
+          postsFeed.innerHTML = `
+            <div class="empty-container">
+              <h3 class="empty-title">No posts to show</h3>
+              <p class="empty-message">Check back later for new posts from your friends.</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Create post cards
+        postsFeed.innerHTML = '';
+        posts.forEach((post, index) => {
+          postsFeed.innerHTML += createPostCard(post, index);
+        });
+
+        console.log('Posts loaded successfully:', posts.length);
+
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        hideLoading();
+        postsFeed.innerHTML = '';
+        errorContainer.style.display = 'block';
+      }
+    }
+
+    // Load user profile in navbar
+    async function loadUserProfile() {
+      try {
+        const response = await fetch('/api/user/');
+        if (response.ok) {
+          const userData = await response.json();
+          const navbarAvatar = document.getElementById('navbar-avatar');
+          if (userData.profile_pic) {
+            navbarAvatar.src = userData.profile_pic;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchPosts();
+      loadUserProfile();
+    });
+
+    // Refresh posts every 2 minutes
+    setInterval(fetchPosts, 120000);
+  </script>
+
+</body>
+</html>

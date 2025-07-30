@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Post - MyBlog</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #18191a;
+      margin: 0;
+      padding: 0;
+      line-height: 1.34;
+      color: #e4e6ea;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    .top-navbar {
+      background: #242526;
+      border-bottom: 1px solid #3a3b3c;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar-brand {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2374e1;
+      text-decoration: none;
+    }
+
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      background: #3a3b3c;
+      color: #e4e6ea;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #4e4f50;
+    }
+
+    .navbar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .navbar-avatar:hover {
+      opacity: 0.8;
+    }
+
+    /* Main Container */
+    .main-container {
+      padding-top: 56px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 72px 16px 16px;
+    }
+
+    /* Upload Form Container */
+    .upload-container {
+      background: #242526;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+    }
+
+    .upload-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #3a3b3c;
+      text-align: center;
+    }
+
+    .upload-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #e4e6ea;
+      margin: 0;
+    }
+
+    .upload-form {
+      padding: 24px;
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #e4e6ea;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #3a3b3c;
+      border: 1px solid #4e4f50;
+      border-radius: 8px;
+      color: #e4e6ea;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      resize: vertical;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #2374e1;
+      box-shadow: 0 0 0 2px rgba(35, 116, 225, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: #b0b3b8;
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      font-family: inherit;
+    }
+
+    /* Image Upload Section */
+    .image-upload-section {
+      border: 2px dashed #4e4f50;
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .image-upload-section:hover {
+      border-color: #2374e1;
+      background: rgba(35, 116, 225, 0.05);
+    }
+
+    .image-upload-section.dragover {
+      border-color: #2374e1;
+      background: rgba(35, 116, 225, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #b0b3b8;
+      margin-bottom: 12px;
+    }
+
+    .upload-text {
+      color: #e4e6ea;
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .upload-subtext {
+      color: #b0b3b8;
+      font-size: 14px;
+    }
+
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Image Preview */
+    .image-preview {
+      display: none;
+      position: relative;
+      margin-top: 16px;
+    }
+
+    .preview-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .remove-image {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background-color 0.2s ease;
+    }
+
+    .remove-image:hover {
+      background: rgba(0, 0, 0, 1);
+    }
+
+    /* Character Counter */
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #b0b3b8;
+      margin-top: 4px;
+    }
+
+    .char-counter.warning {
+      color: #f39c12;
+    }
+
+    .char-counter.error {
+      color: #e74c3c;
+    }
+
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding-top: 20px;
+      border-top: 1px solid #3a3b3c;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 100px;
+    }
+
+    .btn-secondary {
+      background: #3a3b3c;
+      color: #e4e6ea;
+    }
+
+    .btn-secondary:hover {
+      background: #4e4f50;
+    }
+
+    .btn-primary {
+      background: #2374e1;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1a5db8;
+    }
+
+    .btn-primary:disabled {
+      background: #4e4f50;
+      color: #b0b3b8;
+      cursor: not-allowed;
+    }
+
+    /* Loading State */
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Success/Error Messages */
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .message.success {
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+
+    .message.error {
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 72px 8px 16px;
+      }
+
+      .upload-container {
+        border-radius: 8px;
+      }
+
+      .upload-form {
+        padding: 16px;
+      }
+
+      .upload-header {
+        padding: 16px;
+      }
+
+      .form-actions {
+        flex-direction: column-reverse;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .navbar-brand {
+        font-size: 20px;
+      }
+
+      .back-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .top-navbar {
+        height: 50px;
+        padding: 0 8px;
+      }
+
+      .main-container {
+        padding-top: 66px;
+      }
+
+      .navbar-brand {
+        font-size: 18px;
+      }
+
+      .upload-title {
+        font-size: 18px;
+      }
+
+      .image-upload-section {
+        padding: 16px;
+      }
+
+      .upload-icon {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/" class="navbar-brand">MyBlog</a>
+    
+    <div class="navbar-actions">
+      <a href="/" class="back-btn">← Back to Feed</a>
+      <img src="/placeholder.svg?height=32&width=32" alt="Profile" class="navbar-avatar" id="navbar-avatar">
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <div class="upload-container">
+      <div class="upload-header">
+        <h1 class="upload-title">Create New Post</h1>
+      </div>
+
+      <form class="upload-form" id="upload-form">
+        <!-- Success/Error Messages -->
+        <div id="message" class="message"></div>
+
+        <!-- Post Title -->
+        <div class="form-group">
+          <label for="post-title" class="form-label">Post Title *</label>
+          <input 
+            type="text" 
+            id="post-title" 
+            name="post_title" 
+            class="form-input" 
+            placeholder="Enter your post title..."
+            maxlength="200"
+            required
+          >
+          <div class="char-counter" id="title-counter">0/200</div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="form-group">
+          <label for="post-content" class="form-label">Content *</label>
+          <textarea 
+            id="post-content" 
+            name="content" 
+            class="form-input form-textarea" 
+            placeholder="What's on your mind? Share your thoughts..."
+            maxlength="2000"
+            required
+          ></textarea>
+          <div class="char-counter" id="content-counter">0/2000</div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label class="form-label">Image (Optional)</label>
+          <div class="image-upload-section" id="image-upload-area">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Click to upload or drag and drop</div>
+            <div class="upload-subtext">PNG, JPG, GIF up to 10MB</div>
+            <input 
+              type="file" 
+              id="image-input" 
+              name="content_image" 
+              class="file-input" 
+              accept="image/*"
+            >
+          </div>
+          
+          <div class="image-preview" id="image-preview">
+            <img id="preview-img" class="preview-image" src="/placeholder.svg" alt="Preview">
+            <button type="button" class="remove-image" id="remove-image">×</button>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='/'">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            <span class="btn-text">Publish Post</span>
+            <div class="loading">
+              <div class="spinner"></div>
+              <span>Publishing...</span>
+            </div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const form = document.getElementById('upload-form');
+    const titleInput = document.getElementById('post-title');
+    const contentInput = document.getElementById('post-content');
+    const imageInput = document.getElementById('image-input');
+    const imageUploadArea = document.getElementById('image-upload-area');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const removeImageBtn = document.getElementById('remove-image');
+    const submitBtn = document.getElementById('submit-btn');
+    const message = document.getElementById('message');
+    const titleCounter = document.getElementById('title-counter');
+    const contentCounter = document.getElementById('content-counter');
+
+    let selectedFile = null;
+
+    // Character counters
+    function updateCharCounter(input, counter, maxLength) {
+      const currentLength = input.value.length;
+      counter.textContent = `${currentLength}/${maxLength}`;
+      
+      if (currentLength > maxLength * 0.9) {
+        counter.classList.add('warning');
+      } else {
+        counter.classList.remove('warning');
+      }
+      
+      if (currentLength >= maxLength) {
+        counter.classList.add('error');
+      } else {
+        counter.classList.remove('error');
+      }
+    }
+
+    titleInput.addEventListener('input', () => {
+      updateCharCounter(titleInput, titleCounter, 200);
+    });
+
+    contentInput.addEventListener('input', () => {
+      updateCharCounter(contentInput, contentCounter, 2000);
+    });
+
+    // Image upload handling
+    imageInput.addEventListener('change', handleImageSelect);
+    imageUploadArea.addEventListener('click', () => imageInput.click());
+    removeImageBtn.addEventListener('click', removeImage);
+
+    // Drag and drop functionality
+    imageUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageUploadArea.classList.add('dragover');
+    });
+
+    imageUploadArea.addEventListener('dragleave', () => {
+      imageUploadArea.classList.remove('dragover');
+    });
+
+    imageUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageUploadArea.classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        if (file.type.startsWith('image/')) {
+          handleImageFile(file);
+        } else {
+          showMessage('Please select a valid image file.', 'error');
+        }
+      }
+    });
+
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (file) {
+        handleImageFile(file);
+      }
+    }
+
+    function handleImageFile(file) {
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        showMessage('Image size must be less than 10MB.', 'error');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showMessage('Please select a valid image file.', 'error');
+        return;
+      }
+
+      selectedFile = file;
+      
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        imagePreview.style.display = 'block';
+        imageUploadArea.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+      selectedFile = null;
+      imageInput.value = '';
+      imagePreview.style.display = 'none';
+      imageUploadArea.style.display = 'block';
+      previewImg.src = '';
+    }
+
+    // Show message function
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = `message ${type}`;
+      message.style.display = 'block';
+      
+      // Auto hide after 5 seconds
+      setTimeout(() => {
+        message.style.display = 'none';
+      }, 5000);
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+      
+      // Validation
+      if (!title) {
+        showMessage('Please enter a post title.', 'error');
+        titleInput.focus();
+        return;
+      }
+      
+      if (!content) {
+        showMessage('Please enter post content.', 'error');
+        contentInput.focus();
+        return;
+      }
+
+      // Show loading state
+      setLoadingState(true);
+      
+      try {
+        // Create FormData
+        const formData = new FormData();
+        formData.append('post_title', title);
+        formData.append('content', content);
+        
+        if (selectedFile) {
+          formData.append('content_image', selectedFile);
+        }
+
+        // Submit to API
+        const response = await fetch('/api/upload/content/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            // Don't set Content-Type header, let browser set it with boundary for FormData
+            'X-CSRFToken': getCsrfToken() // Add CSRF token if needed
+          }
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          showMessage('Post published successfully!', 'success');
+          
+          // Reset form
+          form.reset();
+          removeImage();
+          updateCharCounter(titleInput, titleCounter, 200);
+          updateCharCounter(contentInput, contentCounter, 2000);
+          
+          // Redirect to home after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+          
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.message || errorData.error || 'Failed to publish post. Please try again.';
+          showMessage(errorMessage, 'error');
+        }
+        
+      } catch (error) {
+        console.error('Error uploading post:', error);
+        showMessage('Network error. Please check your connection and try again.', 'error');
+      } finally {
+        setLoadingState(false);
+      }
+    });
+
+    // Loading state management
+    function setLoadingState(loading) {
+      const btnText = submitBtn.querySelector('.btn-text');
+      const loadingDiv = submitBtn.querySelector('.loading');
+      
+      if (loading) {
+        btnText.style.display = 'none';
+        loadingDiv.style.display = 'flex';
+        submitBtn.disabled = true;
+      } else {
+        btnText.style.display = 'block';
+        loadingDiv.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+    }
+
+    // Get CSRF token (if using Django)
+    function getCsrfToken() {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+          return value;
+        }
+      }
+      return '';
+    }
+
+    // Load user profile
+    async function loadUserProfile() {
+      try {
+        const response = await fetch('/api/user/');
+        if (response.ok) {
+          const userData = await response.json();
+          const navbarAvatar = document.getElementById('navbar-avatar');
+          if (userData.profile_pic) {
+            navbarAvatar.src = userData.profile_pic;
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserProfile();
+      
+      // Initialize character counters
+      updateCharCounter(titleInput, titleCounter, 200);
+      updateCharCounter(contentInput, contentCounter, 2000);
+    });
+
+    // Prevent accidental navigation away
+    let formChanged = false;
+    
+    [titleInput, contentInput, imageInput].forEach(input => {
+      input.addEventListener('input', () => {
+        formChanged = true;
+      });
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+      if (formChanged && (titleInput.value.trim() || contentInput.value.trim() || selectedFile)) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
+
+    // Reset form changed flag on successful submission
+    form.addEventListener('submit', () => {
+      formChanged = false;
+    });
+  </script>
+
+</body>
+</html>
