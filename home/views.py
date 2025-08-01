@@ -10,7 +10,10 @@ from  . import models
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated
+from .helper import upload_image_to_supabase
+from decouple import config
 
+SUPABASE_URL = config('SUPABASE_URL')
 # Create your views here.
 
 
@@ -76,12 +79,23 @@ def Logout_user(request):
 @permission_classes([IsAuthenticated])
 def User_content_upload(request):
     if request.method == "POST":
-        serializer = UserContent(data=request.data)
+        image_file = request.FILES.get('content_image')
+        if not image_file:
+            return Response({"message": "No image file provided"}, status=400)
+        
+        response = upload_image_to_supabase(image_file)
+        public_url = f"{SUPABASE_URL}/storage/v1/object/public/user-content/{response}"
+
+        data = request.data.copy()
+        data['content_image'] = public_url
+
+        serializer = UserContent(data=data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response({"message":'sucess'},status=status.HTTP_201_CREATED)
+            return Response({"message": 'success'}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"message":'error','errors':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['GET'])

@@ -15,7 +15,8 @@ class User_content(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     post_title = models.CharField(max_length=50,verbose_name='title')
     content = models.TextField(verbose_name='content')
-    content_image = models.ImageField(upload_to='user/content/images',blank=True)
+    content_image = models.URLField(blank=True,null=True)
+
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
